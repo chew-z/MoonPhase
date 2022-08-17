@@ -1,0 +1,14 @@
+github.com/apcera/termtables v0.0.0-20170405184538-bcbc5dc54055 h1:IkPAzP+QjchKXXFX6LCcpDKa89b/e/0gPCUbQGWtUUY=
+github.com/apcera/termtables v0.0.0-20170405184538-bcbc5dc54055/go.mod h1:8mHYHlOef9UC51cK1/WRvE/iQVM8O8QlYFa8eh8r5I8=
+github.com/janczer/goMoonPhase v0.0.0-20210411203237-6c61017953a8 h1:Dm5ZV6OiMV+c0NcjZZNE/qdyyWLSGP2aI4mt4vBWMS8=
+github.com/janczer/goMoonPhase v0.0.0-20210411203237-6c61017953a8/go.mod h1:cP58cMQH4tMoeknficHktMZj5QraEnMIMcR0I9EzuzU=
+github.com/joho/godotenv v1.4.0 h1:3l4+N6zfMWnkbPEXKng2o2/MR5mSwTrBih4ZEkkz1lg=
+github.com/joho/godotenv v1.4.0/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+github.com/kyokomi/emoji v2.2.4+incompatible h1:np0woGKwx9LiHAQmwZx79Oc0rHpNw3o+3evou4BEPv4=
+github.com/kyokomi/emoji v2.2.4+incompatible/go.mod h1:mZ6aGCD7yk8j6QY6KICwnZ2pxoszVseX1DNoGtU2tBA=
+github.com/mattn/go-runewidth v0.0.13 h1:lTGmDsbAYt5DmK6OnoV7EuIF1wEIFAcxld6ypU4OSgU=
+github.com/mattn/go-runewidth v0.0.13/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
+github.com/mshafiee/swephgo v1.0.0 h1:WRO0KlD5HXO4Cay4of+ve8nWab7ZYwYfWqpo5Y0VzHE=
+github.com/mshafiee/swephgo v1.0.0/go.mod h1:0VcHoa3tWCeeiJxzb1xyS+NkEeYwzZTeY4PneAHm3T0=
+github.com/rivo/uniseg v0.2.0 h1:S1pD9weZBuJdFmowNwbpi7BJ8TNftyUImj/0WQi72jY=
+github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
