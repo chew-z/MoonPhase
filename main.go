@@ -14,11 +14,12 @@ import (
 )
 
 type Moon struct {
-	date      time.Time
-	unix      int64
-	phase     float64
-	phaseName string
-	emoji     string
+	date        time.Time
+	unix        int64
+	phase       float64
+	phaseName   string
+	ilumination float64
+	emoji       string
 }
 
 var (
@@ -35,28 +36,17 @@ func init() {
 }
 
 func main() {
-	// p := message.NewPrinter(language.Polish)
 
 	now := time.Now()
-	start := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	start := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, location)
 	end := now.AddDate(1, 0, 1) // look ahead up to 1 year and 1 day
 	table1 := termtables.CreateTable()
 	table1.AddHeaders("New Moon", "", "Full Moon", "")
 
 	for d := start; d.After(end) == false; {
 		newMoon, fullMoon := moonPhase(d)
-		d = fullMoon.date.AddDate(0, 0, 13)
-		// mph := MoonPhase.New(newMoon.date)
-		// emoji.Printf("%s %s %s\n", newMoon.date.Format(time.RFC822), moonEmoji(phaseName), phaseName)
-		// s := p.Sprintf("Age: %.1f Ilumination: %.3f Phase: %.3f Longitude: %.3f Distance: %.0f km\n", mph.Age(), mph.Illumination(), mph.Phase(), mph.Longitude(), mph.Distance())
-		// fmt.Println(s)
-
-		// mph = MoonPhase.New(fullMoon.date)
-		// phaseName = mph.PhaseName()
-		// emoji.Printf("%s %s %s\n", fullMoon.date.Format(time.RFC822), moonEmoji(phaseName), phaseName)
-		// s = p.Sprintf("Age: %.1f Ilumination: %.3f Phase: %.3f Longitude: %.3f Distance: %.0f km\n", mph.Age(), mph.Illumination(), mph.Phase(), mph.Longitude(), mph.Distance())
-		// fmt.Println(s)
-		table1.AddRow(newMoon.date.Format(time.RFC822), newMoon.emoji, fullMoon.date.Format(time.RFC822), fullMoon.emoji)
+		table1.AddRow(newMoon.date.Format(time.RFC822), fmt.Sprintf("%.4f", newMoon.ilumination), fullMoon.date.Format(time.RFC822), fmt.Sprintf("%.4f", fullMoon.ilumination))
+		d = fullMoon.date.AddDate(0, 0, 14)
 	}
 	fmt.Println(table1.Render())
 }
@@ -70,7 +60,7 @@ func main() {
 	6) Repeat 2
 */
 func moonPhase(start time.Time) (*Moon, *Moon) {
-	end := start.AddDate(0, 1, 1) // look ahead up to 2 years and 1 day
+	end := start.AddDate(0, 0, 31) // look ahead up to 1 month and 1 day
 	newMoon := Moon{
 		date:  start,
 		unix:  start.Unix(),
@@ -78,8 +68,6 @@ func moonPhase(start time.Time) (*Moon, *Moon) {
 	}
 	for d := start; d.After(end) == false; d = d.AddDate(0, 0, 1) {
 		phase, _ := Phase(d, swephgo.SeMoon)
-		// s := p.Sprintf("Phase: %.3f Prev: %.3f", phase, newMoon.phase)
-		// fmt.Println(s)
 		if math.Abs(1.0-phase) < math.Abs(1.0-newMoon.phase) {
 			break
 		}
@@ -87,57 +75,85 @@ func moonPhase(start time.Time) (*Moon, *Moon) {
 		newMoon.unix = d.Unix()
 		newMoon.phase = phase
 	}
-	// s := p.Sprintf("New Moon aprox. %s", newMoon.date.Format(time.RFC3339))
-	// fmt.Println(s)
 	start = newMoon.date.Add(time.Hour * -24)
 	end = newMoon.date.Add(time.Hour * 24)
-	newMoon = Moon{
+	ps, _ := Phase(start, swephgo.SeMoon)
+	startMoon := Moon{
 		date:  start,
 		unix:  start.Unix(),
-		phase: 1.0,
+		phase: ps,
 	}
-	for d := start; d.After(end) == false; d = d.Add(time.Minute * 1) {
-		phase, _ := Phase(d, swephgo.SeMoon)
-		// s := p.Sprintf("Phase: %.10f Prev: %.10f", phase, newMoon.phase)
-		// fmt.Println(s)
-		if math.Abs(1.0-phase) < math.Abs(1.0-newMoon.phase) {
-			break
-		}
-		newMoon.date = d
-		newMoon.unix = d.Unix()
-		newMoon.phase = phase
+	pe, _ := Phase(end, swephgo.SeMoon)
+	endMoon := Moon{
+		date:  end,
+		unix:  end.Unix(),
+		phase: pe,
 	}
-	// s := p.Sprintf("New Moon exact. %s", newMoon.date.Format(time.RFC3339))
-	// fmt.Println(s)
+	newMoon = binarySearch(startMoon, endMoon, false)
 	mph := MoonPhase.New(newMoon.date)
 	newMoon.phaseName = mph.PhaseName()
 	newMoon.emoji = emoji.Sprintf("%s", moonEmoji(newMoon.phaseName))
+	newMoon.ilumination = mph.Illumination()
 
-	start = newMoon.date.AddDate(0, 0, 13)
-	end = newMoon.date.AddDate(0, 0, 15) // look ahead up to 2 days
-	fullMoon := Moon{
+	start = newMoon.date.AddDate(0, 0, 14)
+	end = newMoon.date.AddDate(0, 0, 16) // look ahead up to 2 days
+	ps, _ = Phase(start, swephgo.SeMoon)
+	startMoon = Moon{
 		date:  start,
 		unix:  start.Unix(),
-		phase: 0.0,
+		phase: ps,
 	}
-	for d := start; d.After(end) == false; d = d.Add(time.Minute * 1) {
-		phase, _ := Phase(d, swephgo.SeMoon)
-		// s := p.Sprintf("Phase: %.10f Prev: %.10f", phase, fullMoon.phase)
-		// fmt.Println(s)
-		if math.Abs(phase) < math.Abs(fullMoon.phase) {
-			break
-		}
-		fullMoon.date = d
-		fullMoon.unix = d.Unix()
-		fullMoon.phase = phase
+	pe, _ = Phase(end, swephgo.SeMoon)
+	endMoon = Moon{
+		date:  end,
+		unix:  end.Unix(),
+		phase: pe,
 	}
-	// s = p.Sprintf("Full Moon exact. %s", fullMoon.date.Format(time.RFC3339))
-	// fmt.Println(s)
+	fullMoon := binarySearch(startMoon, endMoon, true)
 	mph = MoonPhase.New(fullMoon.date)
 	fullMoon.phaseName = mph.PhaseName()
 	fullMoon.emoji = emoji.Sprintf("%s", moonEmoji(fullMoon.phaseName))
+	fullMoon.ilumination = mph.Illumination()
 
 	return &newMoon, &fullMoon
+}
+
+func binarySearch(start Moon, end Moon, fullMoon bool) Moon {
+	half := end.date.Sub(start.date).Seconds()
+	mDate := start.date.Add(time.Second * time.Duration(half/2))
+	phase, _ := Phase(mDate, swephgo.SeMoon)
+
+	// p := message.NewPrinter(language.Polish)
+	// sp := p.Sprintf("Start: %s Mid: %s End: %s", start.date.Format(time.RFC822), mDate.Format(time.RFC822), end.date.Format(time.RFC822))
+	// fmt.Println(sp)
+
+	newStart := start
+	newEnd := end
+	middle := Moon{
+		date:  mDate,
+		unix:  mDate.Unix(),
+		phase: phase,
+	}
+	// sp = p.Sprintf("Start: %.15f Phase: %.15f End: %.15f", newStart.phase, middle.phase, newEnd.phase)
+	// fmt.Println(sp)
+
+	if fullMoon {
+		if start.phase < end.phase {
+			newStart = middle
+		} else {
+			newEnd = middle
+		}
+	} else {
+		if end.phase < start.phase {
+			newStart = middle
+		} else {
+			newEnd = middle
+		}
+	}
+	if newEnd.date.Sub(newStart.date).Minutes() < 1.0 {
+		return newEnd
+	}
+	return binarySearch(newStart, newEnd, fullMoon)
 }
 
 func moonEmoji(icon string) string {
