@@ -14,12 +14,14 @@ import (
 )
 
 type Moon struct {
+	age         float64
 	date        time.Time
 	unix        int64
 	phase       float64
 	phaseName   string
 	ilumination float64
 	emoji       string
+	zodiac      string
 }
 
 var (
@@ -45,7 +47,7 @@ func main() {
 
 	for d := start; d.After(end) == false; {
 		newMoon, fullMoon := moonPhase(d)
-		table1.AddRow(newMoon.date.Format(time.RFC822), fmt.Sprintf("%.4f", newMoon.ilumination), fullMoon.date.Format(time.RFC822), fmt.Sprintf("%.4f", fullMoon.ilumination))
+		table1.AddRow(newMoon.date.Format(time.RFC822), fmt.Sprintf("%.1f", newMoon.age), fullMoon.date.Format(time.RFC822), fmt.Sprintf("%.1f", fullMoon.age))
 		d = fullMoon.date.AddDate(0, 0, 14)
 	}
 	fmt.Println(table1.Render())
@@ -94,6 +96,7 @@ func moonPhase(start time.Time) (*Moon, *Moon) {
 	newMoon.phaseName = mph.PhaseName()
 	newMoon.emoji = emoji.Sprintf("%s", moonEmoji(newMoon.phaseName))
 	newMoon.ilumination = mph.Illumination()
+	newMoon.age = mph.Age()
 
 	start = newMoon.date.AddDate(0, 0, 14)
 	end = newMoon.date.AddDate(0, 0, 16) // look ahead up to 2 days
@@ -114,13 +117,14 @@ func moonPhase(start time.Time) (*Moon, *Moon) {
 	fullMoon.phaseName = mph.PhaseName()
 	fullMoon.emoji = emoji.Sprintf("%s", moonEmoji(fullMoon.phaseName))
 	fullMoon.ilumination = mph.Illumination()
+	fullMoon.age = mph.Age()
 
 	return &newMoon, &fullMoon
 }
 
 func binarySearch(start Moon, end Moon, fullMoon bool) Moon {
-	half := end.date.Sub(start.date).Seconds()
-	mDate := start.date.Add(time.Second * time.Duration(half/2))
+	half := end.date.Sub(start.date).Seconds() / 2
+	mDate := start.date.Add(time.Second * time.Duration(half))
 	phase, _ := Phase(mDate, swephgo.SeMoon)
 
 	// p := message.NewPrinter(language.Polish)

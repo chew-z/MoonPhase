@@ -8,7 +8,6 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/kyokomi/emoji v2.2.4+incompatible
 	github.com/mshafiee/swephgo v1.0.0
-	golang.org/x/text v0.3.7
 )
 
 require (
