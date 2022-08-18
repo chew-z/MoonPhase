@@ -47,7 +47,7 @@ func main() {
 
 	for d := start; d.After(end) == false; {
 		newMoon, fullMoon := moonPhase(d)
-		table1.AddRow(newMoon.date.Format(time.RFC822), fmt.Sprintf("%.1f", newMoon.age), fullMoon.date.Format(time.RFC822), fmt.Sprintf("%.1f", fullMoon.age))
+		table1.AddRow(newMoon.date.Format(time.RFC822), newMoon.zodiac, fullMoon.date.Format(time.RFC822), fullMoon.zodiac)
 		d = fullMoon.date.AddDate(0, 0, 14)
 	}
 	fmt.Println(table1.Render())
@@ -97,6 +97,7 @@ func moonPhase(start time.Time) (*Moon, *Moon) {
 	newMoon.emoji = emoji.Sprintf("%s", moonEmoji(newMoon.phaseName))
 	newMoon.ilumination = mph.Illumination()
 	newMoon.age = mph.Age()
+	newMoon.zodiac = mph.ZodiacSign()
 
 	start = newMoon.date.AddDate(0, 0, 14)
 	end = newMoon.date.AddDate(0, 0, 16) // look ahead up to 2 days
@@ -118,6 +119,7 @@ func moonPhase(start time.Time) (*Moon, *Moon) {
 	fullMoon.emoji = emoji.Sprintf("%s", moonEmoji(fullMoon.phaseName))
 	fullMoon.ilumination = mph.Illumination()
 	fullMoon.age = mph.Age()
+	fullMoon.zodiac = mph.ZodiacSign()
 
 	return &newMoon, &fullMoon
 }
