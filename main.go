@@ -47,7 +47,7 @@ func main() {
 
 	for d := start; d.After(end) == false; {
 		newMoon, fullMoon := moonPhase(d)
-		table1.AddRow(newMoon.date.Format(time.RFC822), newMoon.zodiac, fullMoon.date.Format(time.RFC822), fullMoon.zodiac)
+		table1.AddRow(newMoon.date.Format(time.RFC822), newMoon.emoji, fullMoon.date.Format(time.RFC822), fullMoon.emoji)
 		d = fullMoon.date.AddDate(0, 0, 14)
 	}
 	fmt.Println(table1.Render())
